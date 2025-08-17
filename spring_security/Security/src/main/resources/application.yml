@@ -1,0 +1,19 @@
+spring:
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    timeout: 2000
+
+app:
+  rate-limiting:
+    ip:
+      global-limit: 100
+      auth-limit: 5
+    user:
+      default-limit: 5
+      premium-limit: 20
+    trusted-proxies:
+      - 10.0.0.0/8
+      - 172.16.0.0/12
+      - 192.168.0.0/16
