@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: api-gateway
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+  cache:
+    type: redis
+    caffeine.spec: maximumSize=10000,expireAfterWrite=5m
+    redis:
+      time-to-live: 1m
+  cloud:
+    gateway:
+      default-filters:
+      - name: JwtValidationFilter
+      - name: CircuitBreaker
+        args:
+          name: default
+          fallbackUri: forward:/fallback
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      authService:
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        slidingWindowSize: 20
+  retry:
+    instances:
+      authService:
+        maxAttempts: 3
+        waitDuration: 500ms
+
+jwt:
+  secret: ${JWT_SECRET:your-256-bit-secret}
+  issuer: ultimate-security
